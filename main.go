@@ -1,7 +1,7 @@
 package main
 
-import "fmt"
+import "dhcpfilter/cmd"
 
 func main() {
-	fmt.Println("dhcpfilter")
+	cmd.Execute()
 }
