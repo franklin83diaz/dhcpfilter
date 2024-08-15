@@ -1,6 +1,7 @@
 package cmd
 
 import (
+	"dhcpfilter/internal"
 	"fmt"
 	"os"
 
@@ -19,10 +20,16 @@ var rootCmd = &cobra.Command{
 func init() {
 	//commands
 	rootCmd.AddCommand(versionCmd)
+	rootCmd.AddCommand(addCmd)
+	rootCmd.AddCommand(delCmd)
+	rootCmd.AddCommand(listCmd)
 
 }
 
 func Execute() {
+
+	internal.Init()
+
 	if err := rootCmd.Execute(); err != nil {
 		fmt.Println(err)
 		os.Exit(1)
