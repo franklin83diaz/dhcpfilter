@@ -80,6 +80,9 @@ func AddMAC(mac string) error {
 		return err
 	}
 
+	//Do in the service
+	AddIpt(mac)
+
 	return nil
 
 }
@@ -132,6 +135,9 @@ func RemoveMAC(mac string) error {
 			return err
 		}
 	}
+
+	//Do in the service
+	DelIpt(mac)
 
 	return nil
 }
