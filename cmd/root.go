@@ -25,6 +25,7 @@ func init() {
 	rootCmd.AddCommand(listCmd)
 	rootCmd.AddCommand(serviceCmd)
 	rootCmd.AddCommand(installCmd)
+	rootCmd.AddCommand(uninstallCmd)
 
 }
 
