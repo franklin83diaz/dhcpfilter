@@ -18,7 +18,13 @@ func DelIpt(mac string) {
 
 	err = ipt.Delete("filter", "dhcpfilter", "-p", "udp", "-m", "mac", "--mac-source", mac, "-j", "ACCEPT")
 	if err != nil {
-		log.Fatalf("Error creating : %v", err)
+
+		if strings.Contains(err.Error(), "exit status 4") {
+			log.Printf("Permission denied, try running as root")
+		}
+		if os.Getenv("DEBUG") == "true" {
+			log.Fatalf("Error creating : %v", err)
+		}
 	}
 
 }
@@ -55,6 +61,12 @@ func DropAll() {
 	}
 	err = ipt.AppendUnique("filter", "INPUT", "-p", "udp", "--dport", "67", "-j", "DROP")
 	if err != nil {
-		log.Fatalf("Error add rule: %v", err)
+		if strings.Contains(err.Error(), "exit status 4") {
+			log.Printf("Permission denied, try running as root")
+		}
+
+		if os.Getenv("DEBUG") == "true" {
+			log.Fatalf("Error add rule: %v", err)
+		}
 	}
 }
