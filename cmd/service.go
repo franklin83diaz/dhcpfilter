@@ -3,7 +3,6 @@ package cmd
 import (
 	"dhcpfilter/internal"
 	"dhcpfilter/service"
-	"fmt"
 
 	"github.com/spf13/cobra"
 )
@@ -18,6 +17,5 @@ var serviceCmd = &cobra.Command{
 		internal.Init()
 		service.ServiceRun()
 
-		fmt.Println("Service dhcpfilter started")
 	},
 }

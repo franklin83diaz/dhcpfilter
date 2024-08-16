@@ -1,7 +1,10 @@
 package main
 
-import "dhcpfilter/cmd"
+import (
+	"dhcpfilter/cmd"
+)
 
 func main() {
 	cmd.Execute()
+
 }

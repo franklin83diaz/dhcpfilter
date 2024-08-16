@@ -13,7 +13,7 @@ func DelIpt(mac string) {
 
 	ipt, err := iptables.New()
 	if err != nil {
-		log.Fatalf("Error creando instancia de iptables: %v", err)
+		log.Fatalf("Error creating instance ipt: %v", err)
 	}
 
 	err = ipt.Delete("filter", "INPUT", "-p", "udp", "-m", "mac", "--mac-source", mac, "-j", "ACCEPT")
@@ -27,11 +27,12 @@ func AddIpt(mac string) {
 
 	ipt, err := iptables.New()
 	if err != nil {
-		log.Fatalf("Error creando instancia de iptables: %v", err)
+		log.Fatalf("Error creating instance ipt: %v", err)
 	}
 
 	//Append a rule to the end of a chain in the 'filter' table. dest port udp 67
-	err = ipt.AppendUnique("filter", "INPUT", "-p", "udp", "-m", "mac", "--mac-source", mac, "-j", "ACCEPT")
+	err = ipt.InsertUnique("filter", "INPUT", 1, "-p", "udp", "-m", "mac", "--mac-source", mac, "-j", "ACCEPT")
+	err = ipt.Insert("filter", "INPUT", 1, "-p", "udp", "-m", "mac", "--mac-source", mac, "-j", "ACCEPT")
 	if err != nil {
 		//check status error contains "exit status 4"
 		if strings.Contains(err.Error(), "exit status 4") {
@@ -49,17 +50,18 @@ func AddIpt(mac string) {
 	////////////////////////////////////////////////////////////////////
 
 	//Delete the rule to drop all the packets that don't match the allow list of MAC to port 67
-	err = ipt.Delete("filter", "INPUT", "-p", "udp", "--dport", "67", "-j", "DROP")
+
+}
+
+func DropAll() {
+
+	ipt, err := iptables.New()
 	if err != nil {
-		log.Fatalf("Error eliminando regla de iptables: %v", err)
+		log.Fatalf("Error creando instancia de iptables: %v", err)
 	}
 
-	//Create a rule to drop all the packets that don't match the allow list of MAC to port 67
 	err = ipt.AppendUnique("filter", "INPUT", "-p", "udp", "--dport", "67", "-j", "DROP")
 	if err != nil {
 		log.Fatalf("Error añadiendo regla de iptables: %v", err)
 	}
-
-	////////////////////////////////////////////////////////////////////
-
 }
