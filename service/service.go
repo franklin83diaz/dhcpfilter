@@ -19,19 +19,24 @@ func ServiceRun() {
 		log.Fatalf("Error error creating instace ipt: %v", err)
 	}
 
-	ipt.NewChain("filter", "DHCPFILTER")
+	ipt.NewChain("filter", "dhcpfilter")
+
+	err = ipt.AppendUnique("filter", "INPUT", "-j", "dhcpfilter")
+	if err != nil {
+		log.Fatalf("Error add rule ipt: %v", err)
+	}
+
+	// Drop all the packets that don't match the allow list of MAC to port 67
+	pkg.DropAll()
 
 	ListMAC, err := pkg.ListMAC()
 	if err != nil {
 		log.Fatalf("Error Get the list of Mac: %v", err)
 	}
 
-	// Drop all the packets that don't match the allow list of MAC to port 67
-	pkg.DropAll()
-
 	for _, mac := range ListMAC {
 		// Append a rule to the end of a chain in the 'filter' table. dest port udp 67
-		err = ipt.AppendUnique("filter", "DHCPFILTER", "-p", "udp", "--dport", "67", "-m", "mac", "--mac-source", mac, "-j", "ACCEPT")
+		err = ipt.AppendUnique("filter", "dhcpfilter", "-p", "udp", "--dport", "67", "-m", "mac", "--mac-source", mac, "-j", "ACCEPT")
 		if err != nil {
 			log.Fatalf("Error add rule ipt: %v", err)
 		}
@@ -58,8 +63,19 @@ func ServiceRun() {
 		if err != nil {
 			log.Fatalf("Error error creating instace ipt: %v", err)
 		}
-
-		err = ipt.DeleteChain("filter", "DHCPFILTER")
+		err = ipt.Delete("filter", "INPUT", "-j", "dhcpfilter")
+		if err != nil {
+			log.Fatalf("Error deleting rule ipt: %v", err)
+		}
+		err = ipt.ClearChain("filter", "dhcpfilter")
+		if err != nil {
+			log.Fatalf("Error deleting rule ipt: %v", err)
+		}
+		err = ipt.DeleteChain("filter", "dhcpfilter")
+		if err != nil {
+			log.Fatalf("Error deleting rule ipt: %v", err)
+		}
+		err = ipt.Delete("filter", "INPUT", "-p", "udp", "--dport", "67", "-j", "DROP")
 		if err != nil {
 			log.Fatalf("Error deleting rule ipt: %v", err)
 		}
