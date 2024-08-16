@@ -18,12 +18,6 @@ Checking service is running
 systemctl status dhcpfilter
 `
 
-Change default actions
-
-`
-dhcpfilter default close
-`
-
 Allow mac address
 `
 dhcpfilter allow 00:00...
@@ -36,5 +30,5 @@ dhcpfilter List
 remove mac from allowed mac list
 
 `
-dhcpfilter delete 00:00..
+dhcpfilter del 00:00..
 `
