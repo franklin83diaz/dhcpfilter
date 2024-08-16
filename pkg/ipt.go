@@ -8,7 +8,7 @@ import (
 	"github.com/coreos/go-iptables/iptables"
 )
 
-// Delete a MAC address rule from iptables
+// Delete a MAC address rule from ipt
 func DelIpt(mac string) {
 
 	ipt, err := iptables.New()
@@ -18,11 +18,12 @@ func DelIpt(mac string) {
 
 	err = ipt.Delete("filter", "dhcpfilter", "-p", "udp", "-m", "mac", "--mac-source", mac, "-j", "ACCEPT")
 	if err != nil {
-		log.Fatalf("Error eliminando regla de iptables: %v", err)
+		log.Fatalf("Error creating : %v", err)
 	}
 
 }
 
+// Add a MAC address rule to ipt
 func AddIpt(mac string) {
 
 	ipt, err := iptables.New()
@@ -43,15 +44,9 @@ func AddIpt(mac string) {
 		}
 	}
 
-	// TODO: Check incert rule in ipt
-	//
-	//Move the rule to drop all to the end of the chain
-	////////////////////////////////////////////////////////////////////
-
-	//Delete the rule to drop all the packets that don't match the allow list of MAC to port 67
-
 }
 
+// DropAll drops all packets to port 67
 func DropAll() {
 
 	ipt, err := iptables.New()
@@ -60,6 +55,6 @@ func DropAll() {
 	}
 	err = ipt.AppendUnique("filter", "INPUT", "-p", "udp", "--dport", "67", "-j", "DROP")
 	if err != nil {
-		log.Fatalf("Error añadiendo regla de iptables: %v", err)
+		log.Fatalf("Error add rule: %v", err)
 	}
 }
