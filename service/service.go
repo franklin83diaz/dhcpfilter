@@ -19,6 +19,8 @@ func ServiceRun() {
 		log.Fatalf("Error error creating instace ipt: %v", err)
 	}
 
+	ipt.NewChain("filter", "DHCPFILTER")
+
 	ListMAC, err := pkg.ListMAC()
 	if err != nil {
 		log.Fatalf("Error Get the list of Mac: %v", err)
@@ -29,7 +31,7 @@ func ServiceRun() {
 
 	for _, mac := range ListMAC {
 		// Append a rule to the end of a chain in the 'filter' table. dest port udp 67
-		err = ipt.AppendUnique("filter", "INPUT", "-p", "udp", "--dport", "67", "-m", "mac", "--mac-source", mac, "-j", "ACCEPT")
+		err = ipt.AppendUnique("filter", "DHCPFILTER", "-p", "udp", "--dport", "67", "-m", "mac", "--mac-source", mac, "-j", "ACCEPT")
 		if err != nil {
 			log.Fatalf("Error add rule ipt: %v", err)
 		}
@@ -57,10 +59,11 @@ func ServiceRun() {
 			log.Fatalf("Error error creating instace ipt: %v", err)
 		}
 
-		err = ipt.Delete("filter", "INPUT", "-p", "udp", "--dport", "67", "-j", "DROP")
+		err = ipt.DeleteChain("filter", "DHCPFILTER")
 		if err != nil {
 			log.Fatalf("Error deleting rule ipt: %v", err)
 		}
+
 		done <- true
 	}()
 
