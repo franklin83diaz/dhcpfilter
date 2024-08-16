@@ -19,7 +19,7 @@ func Install() {
 	After=network.target
 	
 	[Service]
-	ExecStart=/usr/local/bin/dhcpfilter
+	ExecStart=/usr/local/bin/dhcpfilter service
 	Restart=always
 	User=nobody
 	Group=nogroup
