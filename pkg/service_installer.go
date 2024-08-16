@@ -10,6 +10,8 @@ import (
 
 func Install() {
 
+	binaryName := os.Args[0]
+
 	//Change iptables iptables-nft to iptables-legacy
 	_ = exec.Command("sudo", "update-alternatives", "--set", "iptables", "/usr/sbin/iptables-legacy")
 
@@ -24,7 +26,7 @@ func Install() {
 	}
 
 	//Copy sample binary to /usr/local/bin
-	CopyFile("dhcpfilter", "/usr/local/bin/dhcpfilter")
+	CopyFile(binaryName, "/usr/local/bin/dhcpfilter")
 	os.Chmod("/usr/local/bin/dhcpfilter", 0755)
 
 	serviceContent := `[Unit]
