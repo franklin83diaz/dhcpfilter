@@ -10,6 +10,19 @@ import (
 
 func Install() {
 
+	//Change iptables iptables-nft to iptables-legacy
+	_ = exec.Command("sudo", "update-alternatives", "--set", "iptables", "/usr/sbin/iptables-legacy")
+
+	//Create the directory and file /var/dhcpfilter/mac_allow_list if not exists
+	if _, err := os.Stat("/var/dhcpfilter"); os.IsNotExist(err) {
+		os.Mkdir("/var/dhcpfilter", 0755)
+	}
+
+	if _, err := os.Stat("/var/dhcpfilter/mac_allow_list"); os.IsNotExist(err) {
+		os.Create("/var/dhcpfilter/mac_allow_list")
+		log.Println("File /var/dhcpfilter/mac_allow_list created")
+	}
+
 	//Copy sample binary to /usr/local/bin
 	CopyFile("dhcpfilter", "/usr/local/bin/dhcpfilter")
 	os.Chmod("/usr/local/bin/dhcpfilter", 0755)
@@ -21,8 +34,8 @@ func Install() {
 	[Service]
 	ExecStart=/usr/local/bin/dhcpfilter service
 	Restart=always
-	User=nobody
-	Group=nogroup
+	User=root
+	Group=root
 	
 	[Install]
 	WantedBy=multi-user.target
