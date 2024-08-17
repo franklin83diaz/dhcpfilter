@@ -2,6 +2,7 @@ package cmd
 
 import (
 	"dhcpfilter/internal"
+	"dhcpfilter/pkg"
 	"dhcpfilter/service"
 
 	"github.com/spf13/cobra"
@@ -15,6 +16,7 @@ var serviceCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 
 		internal.Init()
+		pkg.CheckRuleExists()
 		service.ServiceRun()
 
 	},

@@ -1,6 +1,7 @@
 package pkg
 
 import (
+	"fmt"
 	"log"
 	"os"
 	"strings"
@@ -68,5 +69,33 @@ func DropAll() {
 		if os.Getenv("DEBUG") == "true" {
 			log.Fatalf("Error add rule: %v", err)
 		}
+	}
+}
+
+// check if the rule exists
+func CheckRuleExists() {
+
+	ipt, err := iptables.New()
+	if err != nil {
+		log.Fatalf("Error creating instance ipt: %v", err)
+	}
+
+	rules, err := ipt.List("filter", "dhcpfilter")
+	if err != nil {
+		if strings.Contains(err.Error(), "exit status 4") {
+			log.Printf("Permission denied, try running as root")
+		}
+		if os.Getenv("DEBUG") == "true" {
+			log.Fatalf("Error creating : %v", err)
+		}
+	}
+
+	if len(rules) != 0 {
+		//red color
+		fmt.Println("\033[31m")
+		fmt.Println("Alert: Rule dhcpfilter exists, if you running the service as a command line, when you kill this service, the rule will also be deleted and service dhcpfilter will not work, so you must restart the service after killing it.")
+		fmt.Println("If you no running the service as a command line, you can ignore this message.")
+		fmt.Println("\033[0m")
+
 	}
 }
